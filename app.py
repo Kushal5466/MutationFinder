@@ -1,6 +1,6 @@
+from flask import Flask, jsonify, request
 import subprocess
 import os
-from flask import Flask, jsonify, request
 
 # Initialize the Flask application
 app = Flask(__name__)
@@ -13,7 +13,8 @@ def run_variant_caller(bam_file, ref_genome):
     # Command to run the variant caller (e.g., FreeBayes) with the reference genome and BAM file as inputs
     # The results will be written to the VCF file
     command = f"freebayes -f {ref_genome} {bam_file} > {vcf_file}"
-
+    
+    # Execute the command in the shell
     subprocess.run(command, shell=True)
     
     # Return the name of the generated VCF file
@@ -36,6 +37,39 @@ def run_variant_caller_endpoint():
     
     # Return a JSON response with a success message and the name of the generated VCF file
     return jsonify({"message": "SNPs identified", "vcf_file": vcf_file})
+
+# Define a route to retrieve SNPs from the generated VCF file
+@app.route('/get-snps', methods=['GET'])
+def get_snps():
+    # Get the VCF file name from the query parameters, default to 'output_variants.vcf' if not provided
+    vcf_file = request.args.get('vcf_file', 'output_variants.vcf')
+    snps = []
+
+    # Open the VCF file and read it line by line
+    with open(vcf_file, 'r') as file:
+        for line in file:
+            # Skip header lines that start with '#'
+            if line.startswith("#"):
+                continue
+            
+            # Split the line into fields based on tab separation
+            fields = line.strip().split("\t")
+            chrom = fields[0]       # Chromosome
+            pos = int(fields[1])     # Position on the chromosome
+            ref = fields[3]          # Reference allele
+            alt = fields[4]          # Alternate allele
+            
+            # Append the SNP information to the list as a dictionary
+            snps.append({
+                "chrom": chrom,
+                "position": pos,
+                "ref": ref,
+                "alt": alt,
+                "type": "snp"         # Specify the type of variant as SNP
+            })
+
+    # Return the list of SNPs as a JSON response
+    return jsonify(snps)
 
 # Run the Flask application in debug mode when the script is executed directly
 if __name__ == "__main__":
