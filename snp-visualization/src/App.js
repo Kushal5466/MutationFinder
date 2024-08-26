@@ -1,58 +1,103 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import GenomeViewer from "./Components/GenomeViewer";
-import ZoomControls from "./Components/ZoomControls";
 import VarianceBoxPlot from "./Components/VarianceBoxPlot";
-import FullPageGraph from "./Components/FullPageGraph";
-import SequenceVisualizer from "./Components/SequenceVisualizer";
 import SNPSummaryTable from "./Components/SNPSummaryTable";
-import "bootstrap/dist/css/bootstrap.min.css";
+import ZoomControls from "./Components/ZoomControls"; // Import ZoomControls component for zoom functionality
+import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS for styling
 
 function App() {
+  // State to hold SNP data fetched from the backend
   const [snps, setSnps] = useState([]);
+  // State to manage the zoom level for the GenomeViewer component
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [sequence, setSequence] = useState("ACTGGTACGTAGCTAGGCTAGCTAGCTAGC"); // Sample sequence data
 
+  // useEffect hook to fetch SNP data from the backend API when the component mounts
   useEffect(() => {
-    // Fetch the SNP data from the Flask backend
     fetch("http://127.0.0.1:8000/get-snps?vcf_file=output_variants.vcf")
-      .then((response) => response.json())
-      .then((data) => setSnps(data))
-      .catch((error) => console.error("Error fetching SNP data:", error));
-  }, []);
+      .then((response) => response.json()) // Parse the response as JSON
+      .then((data) => setSnps(data)) // Update the snps state with the fetched data
+      .catch((error) => console.error("Error fetching SNP data:", error)); // Log any errors to the console
+  }, []); // Empty dependency array means this effect runs once on component mount
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <header style={{ textAlign: "center", padding: "20px" }}>
-        <h1>Genome Viewer</h1>
-      </header>
+    <Router>
+      <div
+        className="container-fluid"
+        style={{ height: "100vh", display: "flex", flexDirection: "column" }}
+      >
+        {/* Navbar Section */}
+        <header style={{ textAlign: "center", padding: "20px" }}>
+          <h1>Genome Viewer App</h1>
+          <nav>
+            {/* Links to navigate between different routes */}
+            <Link to="/genome-viewer" style={{ margin: "0 10px" }}>
+              Genome Viewer
+            </Link>
+            <Link to="/variance-box-plot" style={{ margin: "0 10px" }}>
+              Variance Box Plot
+            </Link>
+            <Link to="/snp-summary-table" style={{ margin: "0 10px" }}>
+              SNP Summary Table
+            </Link>
+          </nav>
+        </header>
 
-      <main style={{ flex: 1, display: "flex", flexDirection: "row" }}>
-        {/* Left Sidebar for Zoom Controls */}
-        <aside style={{ width: "20%", padding: "10px" }}>
-          <ZoomControls zoomLevel={zoomLevel} setZoomLevel={setZoomLevel} />
-          <VarianceBoxPlot data={snps} />
-        </aside>
+        <Routes>
+          {/* Route for Genome Viewer with Zoom Controls */}
+          <Route
+            path="/genome-viewer"
+            element={
+              <div>
+                {/* Integrate ZoomControls component to control zoom level */}
+                <ZoomControls
+                  zoomLevel={zoomLevel}
+                  setZoomLevel={setZoomLevel}
+                />
+                {/* Pass snps and zoomLevel as props to GenomeViewer component */}
+                <GenomeViewer
+                  snps={snps}
+                  zoomLevel={zoomLevel}
+                  setZoomLevel={setZoomLevel}
+                />
+              </div>
+            }
+          />
 
-        {/* Main Content Area for Genome Viewer, Sequence Visualizer, and FullPageGraph */}
-        <section style={{ width: "80%", padding: "10px" }}>
-          <GenomeViewer snps={snps} zoomLevel={zoomLevel} />
-          <div style={{ marginTop: "20px" }}>
-            <SequenceVisualizer sequence={sequence} snps={snps} />
-          </div>
-          <div style={{ marginTop: "20px" }}>
-            <FullPageGraph data={snps} />
-          </div>
-          <SNPSummaryTable snps={snps} />
-        </section>
-      </main>
-    </div>
+          {/* Route for Variance Box Plot */}
+          <Route
+            path="/variance-box-plot"
+            element={<VarianceBoxPlot data={snps} />}
+          />
+
+          {/* Route for SNP Summary Table */}
+          <Route
+            path="/snp-summary-table"
+            element={<SNPSummaryTable snps={snps} />}
+          />
+
+          {/* Default route (/) also showing Genome Viewer with Zoom Controls */}
+          <Route
+            path="/"
+            element={
+              <div>
+                {/* Integrate ZoomControls component to control zoom level */}
+                <ZoomControls
+                  zoomLevel={zoomLevel}
+                  setZoomLevel={setZoomLevel}
+                />
+                {/* Pass snps and zoomLevel as props to GenomeViewer component */}
+                <GenomeViewer
+                  snps={snps}
+                  zoomLevel={zoomLevel}
+                  setZoomLevel={setZoomLevel}
+                />
+              </div>
+            }
+          />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
