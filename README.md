@@ -4,7 +4,7 @@ web application to identify and visualize single nucleotide polymorphisms (SNPs)
 
 Before Starting of the Project Let's dicuss some of the tools that I have used to complete this project. I have list steps for mac
 
-## How to Install and Use Tools
+### How to Install and Use Tools
 
 ### Install Homebrew
 
@@ -12,7 +12,7 @@ Before Starting of the Project Let's dicuss some of the tools that I have used t
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-## Install BWA.
+### Install BWA.
 
 ### BWA is used for aligning short reads to the reference genome:
 
@@ -20,23 +20,24 @@ Before Starting of the Project Let's dicuss some of the tools that I have used t
 brew install bwa
 ```
 
-## Samtools is required for manipulating and processing the SAM/BAM files:
+### Samtools is required for manipulating and processing the SAM/BAM files:
 
 ```bash
 brew install samtools
 ```
 
-## Download the Reference Genome
+### Download the Reference Genome
 
 ### Navigate to your working directory
 
-```bash cd /path/to/your/working/directory````
+`````bash
+cd /path/to/your/working/directory````
 
 ### Download the reference genome
 
 ```bash
 curl -O https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/571/405/GCA_002571405.2_ASM257140v2/GCA_002571405.2_ASM257140v2_genomic.fna.gz
-```
+`````
 
 ### Download the Short Read Data
 
