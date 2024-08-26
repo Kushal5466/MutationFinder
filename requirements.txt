@@ -1,0 +1,6 @@
+Python==3.7.9
+Flask==2.2.5
+Flask-Cors==4.0.1
+pysam==0.22.1
+pysam==0.19.1       # For handling BAM/VCF files in Python
+biopython==1.79     # For biological data processing
