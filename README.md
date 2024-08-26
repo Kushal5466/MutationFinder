@@ -30,14 +30,15 @@ brew install samtools
 
 ### Navigate to your working directory
 
-`````bash
-cd /path/to/your/working/directory````
+```bash
+cd /path/to/your/working/directory
+```
 
 ### Download the reference genome
 
 ```bash
 curl -O https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/571/405/GCA_002571405.2_ASM257140v2/GCA_002571405.2_ASM257140v2_genomic.fna.gz
-`````
+```
 
 ### Download the Short Read Data
 
